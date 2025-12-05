@@ -1,6 +1,7 @@
 ﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
-using Ciot.Sdk.Iface;
+using Ciot.Sdk.Domain.Interfaces;
+using Ciot.Sdk.Domain.Repositories;
+using Ciot.Sdk.Errors;
 using LanguageExt;
 using System;
 using System.Threading.Tasks;
@@ -14,8 +15,8 @@ namespace Ciot.Sdk.Core
 
         private readonly IIfaceRepository ifaceRepository;
 
-        private Status status;
-        private Task task;
+        private readonly Status status;
+        private readonly Task task;
 
         public Ciot(IIfaceRepository ifaceRepository, IfaceInfo info) 
         { 

@@ -1,12 +1,13 @@
 ﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
-using Ciot.Sdk.Iface.Impl;
+using Ciot.Sdk.Domain.Interfaces;
+using Ciot.Sdk.Domain.Repositories;
+using Ciot.Sdk.Errors;
 using Google.Protobuf;
 using LanguageExt;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Ciot.Sdk.Iface
+namespace Ciot.Sdk.Infra.Interfaces
 {
     public class IfaceManager : IfaceEventManager, IIfaceManager
     {
@@ -62,7 +63,7 @@ namespace Ciot.Sdk.Iface
                             case IfaceType.Sys:
                                 return new ErrorNotImplemented("Interface not implemented");
                             case IfaceType.Uart:
-                                newIface = new Uart(iface);
+                                newIface = new Uart(iface.Id);
                                 break;
                             case IfaceType.Usb:
                                 return new ErrorNotImplemented("Interface not implemented");

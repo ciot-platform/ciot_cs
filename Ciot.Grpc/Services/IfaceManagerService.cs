@@ -1,7 +1,8 @@
 ﻿using Ciot.Grpc.Common.Stream;
 using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
-using Ciot.Sdk.Iface;
+using Ciot.Sdk.Domain.Interfaces;
+using Ciot.Sdk.Domain.Repositories;
+using Ciot.Sdk.Errors;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using System.Collections.Concurrent;
@@ -123,7 +124,7 @@ namespace Ciot.Grpc.Services
         {
             var subscriber = new Subscriber<Event>(request.Iface);
 
-            if (subscribers.Count == 0)
+            if (subscribers.IsEmpty)
             {
                 ifaceManager.OnEvent += IfaceManager_OnEvent;
             }
@@ -156,7 +157,7 @@ namespace Ciot.Grpc.Services
                     {
                         ifaceManager.UnsubscribeToEvents(request.Iface);
                         subscribers.TryRemove(request.Id, out _);
-                        if (subscribers.Count == 0)
+                        if (subscribers.IsEmpty)
                         {
                             ifaceManager.OnEvent -= IfaceManager_OnEvent;
                         }
@@ -166,7 +167,7 @@ namespace Ciot.Grpc.Services
                 {
                     ifaceManager.UnsubscribeToEvents(request.Iface);
                     subscribers.TryRemove(request.Id, out _);
-                    if (subscribers.Count == 0)
+                    if (subscribers.IsEmpty)
                     {
                         ifaceManager.OnEvent -= IfaceManager_OnEvent;
                     }

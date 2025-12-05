@@ -2,19 +2,17 @@
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
-using Ciot.Sdk.Common.Error;
 using LanguageExt;
+using Ciot.Sdk.Errors;
+using Ciot.Sdk.Domain.Interfaces;
 
-namespace Ciot.Sdk.Iface.Impl
+namespace Ciot.Sdk.Infra.Interfaces
 {
-    public class HttpClient : IIface
+    public class HttpClient : IfaceBase
     {
-        public event EventHandler<Event> OnEvent;
-        public IfaceInfo Info { get; private set; }
-
         private HttpClientCfg cfg;
 
-        private HttpClientStatus status;
+        private readonly HttpClientStatus status;
 
         public HttpClient(IfaceInfo info)
         {
@@ -25,19 +23,19 @@ namespace Ciot.Sdk.Iface.Impl
         public Err Start(HttpClientCfg cfg)
         {
             this.cfg = cfg;
-            OnEvent?.Invoke(this, new Event
+            RaiseEvent(new Event
             {
                 Type = EventType.Started,
             });
             return Err.Ok;
         }
 
-        public Err Stop()
+        public override Err Stop()
         {
             return Err.Ok;
         }
 
-        public Err GetData(MsgData data)
+        public override Err GetData(MsgData data)
         {
             if (data.TypeCase != MsgData.TypeOneofCase.HttpClient)
             {
@@ -59,7 +57,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Err.Ok;
         }
 
-        public Err ProcessData(MsgData data)
+        public override Err ProcessData(MsgData data)
         {
             if (data.TypeCase != MsgData.TypeOneofCase.HttpClient)
             {
@@ -80,7 +78,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Err.Ok;
         }
 
-        public async Task<Either<ErrorBase, byte[]>> SendData(byte[] data)
+        public override async Task<Either<ErrorBase, byte[]>> SendData(byte[] data)
         {
             try
             {

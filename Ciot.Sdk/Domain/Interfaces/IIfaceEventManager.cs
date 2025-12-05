@@ -1,10 +1,11 @@
 ﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
+using Ciot.Sdk.Errors;
+using Ciot.Sdk.Infra.Interfaces;
 using LanguageExt;
 using System;
 using System.Collections.Generic;
 
-namespace Ciot.Sdk.Iface
+namespace Ciot.Sdk.Domain.Interfaces
 {
     public interface IIfaceEventManager
     {
