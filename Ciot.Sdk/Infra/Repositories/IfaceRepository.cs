@@ -1,11 +1,12 @@
 ﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
+using Ciot.Sdk.Domain.Repositories;
+using Ciot.Sdk.Errors;
 using LanguageExt;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Ciot.Sdk.Iface
+namespace Ciot.Sdk.Infra.Repositories
 {
     public class IfaceRepository : IIfaceRepository
     {

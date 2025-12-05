@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ciot.Sdk.Common.Error
+namespace Ciot.Sdk.Errors
 {
     public class ErrorNotSupported : ErrorBase
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ciot.Sdk.Decoder
+namespace Ciot.Sdk.Domain.Interfaces
 {
     public enum DecoderState
     {

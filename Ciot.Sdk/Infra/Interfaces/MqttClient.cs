@@ -1,5 +1,6 @@
 ﻿using Ciot.Protos.V2;
-using Ciot.Sdk.Common.Error;
+using Ciot.Sdk.Domain.Interfaces;
+using Ciot.Sdk.Errors;
 using LanguageExt;
 using MQTTnet;
 using MQTTnet.Client;
@@ -9,12 +10,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ciot.Sdk.Iface.Impl
+namespace Ciot.Sdk.Infra.Interfaces
 {
-    public class MqttClient : IIface
+    public class MqttClient : IfaceBase
     {
-        public event EventHandler<Event> OnEvent;
-        public IfaceInfo Info { get; private set; }
         public MqttClientCfg Cfg => cfg;
         public MqttClientStatus Status => status;
 
@@ -35,12 +34,32 @@ namespace Ciot.Sdk.Iface.Impl
 
             var uri = new Uri(cfg.Url);
             var factory = new MqttFactory();
-            var opts = new MqttClientOptionsBuilder()
-                .WithClientId(cfg.ClientId)
-                .WithTcpServer(uri.Host, uri.Port)
-                .WithCleanSession()
-                .WithCredentials(cfg.User, cfg.Password)
-                .Build();
+            var opts = default(MqttClientOptions);
+
+            if (cfg.Url.StartsWith("mqtts://") || cfg.Url.StartsWith("wss://"))
+            {
+                opts = new MqttClientOptionsBuilder()
+                    .WithClientId(cfg.ClientId)
+                    .WithTcpServer(uri.Host, uri.Port)
+                    .WithCleanSession()
+                    .WithCredentials(cfg.User, cfg.Password)
+                    .WithTlsOptions( new MqttClientTlsOptions {
+                        UseTls = true,
+                        AllowUntrustedCertificates = true,
+                        IgnoreCertificateChainErrors = true,
+                        IgnoreCertificateRevocationErrors = true
+                    })
+                    .Build();
+            }
+            else
+            {
+                opts = new MqttClientOptionsBuilder()
+                    .WithClientId(cfg.ClientId)
+                    .WithTcpServer(uri.Host, uri.Port)
+                    .WithCleanSession()
+                    .WithCredentials(cfg.User, cfg.Password)
+                    .Build();
+            }
 
             client = factory.CreateMqttClient();
             client.ConnectedAsync += Client_ConnectedAsync;
@@ -54,14 +73,14 @@ namespace Ciot.Sdk.Iface.Impl
 
         private Task Client_DisconnectedAsync(MqttClientDisconnectedEventArgs arg)
         {
-            OnEvent?.Invoke(this, new Event
+            RaiseEvent(new Event
             {
                 Type = EventType.Stopped,
             });
             return Task.CompletedTask;
         }
 
-        public Err Stop()
+        public override Err Stop()
         {
             client.DisconnectAsync();
             client.Dispose();
@@ -76,7 +95,7 @@ namespace Ciot.Sdk.Iface.Impl
             client.SubscribeAsync(topicFilter);
             status.State = MqttClientState.Connected;
             status.ConnCount++;
-            OnEvent?.Invoke(this, new Event
+            RaiseEvent(new Event
             {
                 Type = EventType.Started,
             });
@@ -93,7 +112,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Task.CompletedTask;
         }
 
-        public Err GetData(MsgData data)
+        public override Err GetData(MsgData data)
         {
             if (data.TypeCase != MsgData.TypeOneofCase.MqttClient)
             {
@@ -115,7 +134,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Err.Ok;
         }
 
-        public Err ProcessData(MsgData data)
+        public override Err ProcessData(MsgData data)
         {
             if (data.TypeCase != MsgData.TypeOneofCase.MqttClient)
             {
@@ -136,7 +155,7 @@ namespace Ciot.Sdk.Iface.Impl
             return Err.Ok;
         }
 
-        public async Task<Either<ErrorBase, byte[]>> SendData(byte[] data)
+        public override async Task<Either<ErrorBase, byte[]>> SendData(byte[] data)
         {
             try
             {
@@ -170,7 +189,7 @@ namespace Ciot.Sdk.Iface.Impl
 
         protected void TriggerEvent(Event e)
         {
-            OnEvent?.Invoke(this, e);
+            RaiseEvent(e);
         }
     }
 }

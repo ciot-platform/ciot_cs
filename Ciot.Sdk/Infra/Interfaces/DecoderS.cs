@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Ciot.Sdk.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ciot.Sdk.Decoder
+namespace Ciot.Sdk.Infra.Interfaces
 {
     public class DecoderS : IDecoder
     {

@@ -1,7 +1,7 @@
 ﻿using Ciot.Protos.V2;
 using Grpc.Core;
 
-namespace Ciot.Sdk.Common.Error
+namespace Ciot.Sdk.Errors
 {
     public class ErrorNotImplemented : ErrorBase
     {

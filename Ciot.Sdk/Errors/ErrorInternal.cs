@@ -2,7 +2,7 @@
 using Grpc.Core;
 using System;
 
-namespace Ciot.Sdk.Common.Error
+namespace Ciot.Sdk.Errors
 {
     public class ErrorInternal : ErrorBase
     {
