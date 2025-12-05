@@ -1,8 +1,11 @@
 using Ciot.Protos.V2;
 using Ciot.Grpc.Common.Stream;
-using Ciot.Sdk.Iface;
 using System.Collections.Concurrent;
 using Grpc.AspNetCore.Server;
+using Ciot.Sdk.Domain.Interfaces;
+using Ciot.Sdk.Infra.Interfaces;
+using Ciot.Sdk.Domain.Repositories;
+using Ciot.Sdk.Infra.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var ifacesSubscribers = new ConcurrentDictionary<string, Subscriber<Event>>();
